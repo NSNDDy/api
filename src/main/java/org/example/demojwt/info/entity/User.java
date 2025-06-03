@@ -1,4 +1,4 @@
-package org.example.demojwt.common.entity;
+package org.example.demojwt.info.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

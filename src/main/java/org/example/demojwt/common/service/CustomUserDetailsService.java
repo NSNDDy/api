@@ -1,7 +1,7 @@
 package org.example.demojwt.common.service;
 
-import org.example.demojwt.common.entity.User;
-import org.example.demojwt.common.repository.UserRepository;
+import org.example.demojwt.info.entity.User;
+import org.example.demojwt.info.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,6 +1,6 @@
-package org.example.demojwt.common.repository;
+package org.example.demojwt.info.repository;
 
-import org.example.demojwt.common.entity.User;
+import org.example.demojwt.info.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

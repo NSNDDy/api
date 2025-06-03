@@ -1,7 +1,7 @@
 package org.example.demojwt.info.controller;
 
-import org.example.demojwt.common.entity.User;
-import org.example.demojwt.common.repository.UserRepository;
+import org.example.demojwt.info.entity.User;
+import org.example.demojwt.info.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
