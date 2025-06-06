@@ -27,7 +27,13 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@RequestBody
                            AuthRequest authRequest){
-        User user = new User(null , authRequest.getUsername(), passwordEncoder.encode(authRequest.getPassword()), 1, null);
+        User user = User.builder()
+                .userId(null)
+                .username(authRequest.getUsername())
+                .password(passwordEncoder.encode(authRequest.getPassword()))
+                .role(1)
+                .build();
+//                new User(null , authRequest.getUsername(), passwordEncoder.encode(authRequest.getPassword()), 1, null);
         userRepository.save(user);
         return "Đăng ký thành công";
     }
