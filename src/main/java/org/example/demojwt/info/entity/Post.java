@@ -15,14 +15,16 @@ import java.util.List;
 @NoArgsConstructor
 public class Post {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long postId;
     private String title;
     private String content;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Id",
-    joinColumns =  @JoinColumn(name = "postId"), // ID của Post
-    inverseJoinColumns = @JoinColumn(name = "userId") // ID của user
+    joinColumns =  @JoinColumn(name = "post_id"), // ID của Post
+    inverseJoinColumns = @JoinColumn(name = "user_id") // ID của user
     )
     private List<User> author;
 }

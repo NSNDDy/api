@@ -23,7 +23,8 @@ public class PostService {
         String username = authentication.getName();
         List<User> user = userRepository.findAllByUsernameContaining(username);
 
-        Post post = Post.builder().title(postRequest.getTitle())
+        Post post = Post.builder()
+                .title(postRequest.getTitle())
                 .content(postRequest.getContent())
                 .author(user)
                 .build();
