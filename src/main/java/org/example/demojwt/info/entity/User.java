@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "USERS")
 @Builder
 public class User {
     @Id
@@ -24,8 +24,8 @@ public class User {
     private String password;
     private int role;
     @Column(length = 1000)
-    private String refreshToken;
+    private String token;
 
-    @ManyToMany(mappedBy = "author")
-    private List<Post> posts;
+//    @ManyToMany(mappedBy = "author")
+//    private List<Post> posts;
 }

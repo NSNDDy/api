@@ -1,7 +1,8 @@
 package org.example.demojwt.info.controller;
 
-import org.example.demojwt.common.dto.AuthReponse;
 import org.example.demojwt.common.dto.AuthRequest;
+import org.example.demojwt.common.dto.ResponseInfoDto;
+import org.example.demojwt.common.util.MsgUtil;
 import org.example.demojwt.info.entity.User;
 import org.example.demojwt.info.repository.UserRepository;
 import org.example.demojwt.common.service.JwtService;
@@ -22,6 +23,8 @@ public class AuthController {
     private JwtService jwtService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private MsgUtil msgUntil;
 
 
     @PostMapping("/register")
@@ -39,7 +42,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public AuthReponse login(@RequestBody AuthRequest authRequest){
+    public ResponseInfoDto login(@RequestBody AuthRequest authRequest){
+
+        ResponseInfoDto responseInfoDto = new ResponseInfoDto();
         User user = userRepository.findByUsername(authRequest.getUsername())
                 .orElseThrow(() -> new RuntimeException("Sai Thông tin"));
 
@@ -48,11 +53,18 @@ public class AuthController {
 
 
         String accessToken = jwtService.generateToken(user.getUsername());
-        String refreshToken = jwtService.generateToken(user.getUsername());
 
-        user.setRefreshToken(refreshToken);
-        userRepository.save(user);
-        return new AuthReponse(accessToken,refreshToken);
+
+
+
+        return responseInfoDto;
+//        String refreshToken = jwtService.generateToken(user.getUsername());
+
+
+
+//        user.setRefreshToken(refreshToken);
+//        userRepository.save(user);
+//        return new AuthReponse(accessToken,refreshToken);
     }
 
 //    @PostMapping("/refresh")

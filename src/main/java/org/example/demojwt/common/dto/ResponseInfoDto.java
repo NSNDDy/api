@@ -11,11 +11,13 @@ import java.util.Objects;
 @Data
 public class ResponseInfoDto {
 
-    private static final int SUCCESS_RESULT = 0;
-    private static final int ERROR_RESULT = 1;
-    private static final int NOT_FOUND_RESULT = 2;
+    public static final int SUCCESS_RESULT = 0;
+    public static final int ERROR_RESULT = 1;
+    public static final int NOT_FOUND_RESULT = 2;
 
     int result;
+
+    ArrayList<MessageInfoDto> messageList = new ArrayList<>();
 
     Object returnObject;
 
