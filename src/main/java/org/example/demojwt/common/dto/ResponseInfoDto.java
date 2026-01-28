@@ -11,37 +11,41 @@ import java.util.Objects;
 @Data
 public class ResponseInfoDto {
 
-    public static final int SUCCESS_RESULT = 0;
-    public static final int ERROR_RESULT = 1;
-    public static final int NOT_FOUND_RESULT = 2;
+    //    public static final int SUCCESS_RESULT = 0;
+    //    public static final int ERROR_RESULT = 1;
+    //    public static final int NOT_FOUND_RESULT = 2;
+    //
+    //    int result;
+    //
+    //    ArrayList<MessageInfoDto> messageList = new ArrayList<>();
+    //
+    //    Object returnObject;
 
-    int result;
-
-    ArrayList<MessageInfoDto> messageList = new ArrayList<>();
-
-    Object returnObject;
+    boolean success;
+    ArrayList<MessageInfoDto> message = new ArrayList<>();
+    Object data;
 
     public void setReturnObject(Object returnObject) {
         // nếu object là null
-        if (Objects.isNull(returnObject)){
+        if (Objects.isNull(returnObject)) {
             return;
         }
-        this.returnObject = returnObject;
+        this.data = returnObject;
         String phase = "■■■■■ Phản hồi ResponseDto :";
         try {
             // lưu trữ
-            if (returnObject instanceof ArrayList<?>){
+            if (returnObject instanceof ArrayList<?>) {
                 // returnObject
                 ArrayList<?> list = (ArrayList<?>) returnObject;
                 // Nếu giá trị danh sách tồn tại
-                if (!list.isEmpty()){
+                if (!list.isEmpty()) {
                     //
                 }
             } else if (returnObject instanceof List<?>) {
                 //
                 List<?> list = (List<?>) returnObject;
                 //
-                if (!list.isEmpty()){
+                if (!list.isEmpty()) {
                     //
 
                 }
@@ -50,7 +54,7 @@ public class ResponseInfoDto {
 
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error(e.toString());
         }
     }

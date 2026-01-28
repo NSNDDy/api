@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -17,15 +15,21 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
-    @Column(unique = true)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(name = "password_hash", nullable = false)
     private String password;
-    private int role;
+
+    @Column(unique = true)
+    private String email;
+    
+    private String avatar;
+
     @Column(length = 1000)
     private String token;
-
-//    @ManyToMany(mappedBy = "author")
-//    private List<Post> posts;
+    private int role;
 }
