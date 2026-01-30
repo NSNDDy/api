@@ -1,10 +1,13 @@
-package org.example.demojwt.common.repository;
+package org.example.demojwt.info.repository;
 
-import org.example.demojwt.common.entity.User;
+import org.example.demojwt.info.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByUsername(String username);
+
+    List<User> findAllByUsernameContaining(String username);
 }

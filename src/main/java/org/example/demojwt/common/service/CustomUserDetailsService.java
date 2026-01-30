@@ -1,7 +1,7 @@
 package org.example.demojwt.common.service;
 
-import org.example.demojwt.common.entity.User;
-import org.example.demojwt.common.repository.UserRepository;
+import org.example.demojwt.info.entity.User;
+import org.example.demojwt.info.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                Collections.singletonList(() -> String.valueOf(user.getRole()))
+                Collections.singletonList(() -> "ROLE_USER")
         );
 
 

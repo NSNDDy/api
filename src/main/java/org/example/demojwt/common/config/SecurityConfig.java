@@ -24,18 +24,17 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/h2-console/**").permitAll()
-                        .anyRequest().authenticated())
-                .sessionManagement(sess ->
-                                           sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .headers(headers -> headers
-                        .disable()
-                );
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth.requestMatchers("/h2-console/**",
+                                                                                                      "/api*",
+                                                                                                      "/socket.io/**",
+                                                                                                      "/api/auth/**",
+                                                                                                      "/error",
+                                                                                                      "/api-login")
+                .permitAll().anyRequest().authenticated()).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).headers(headers -> headers.disable());
 
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter,
+                             UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

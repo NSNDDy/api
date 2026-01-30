@@ -1,19 +1,18 @@
 package org.example.demojwt.info.controller;
 
-import org.example.demojwt.common.dto.AuthReponse;
-import org.example.demojwt.common.dto.AuthRequest;
-import org.example.demojwt.common.entity.User;
-import org.example.demojwt.common.repository.UserRepository;
+import org.example.demojwt.common.dto.*;
 import org.example.demojwt.common.service.JwtService;
+import org.example.demojwt.info.entity.User;
+import org.example.demojwt.info.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("/api/auth")
 public class AuthController {
 
     @Autowired
@@ -23,45 +22,61 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @PostMapping("/register")
-    public String register(@RequestBody
-                           AuthRequest authRequest){
-        User user = new User(null , authRequest.getUsername(), passwordEncoder.encode(authRequest.getPassword()), 1, null);
+    public ResponseEntity<ApiResponse<String>> register(@RequestBody RegisterRequest request) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Username already exists"));
+        }
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
+                .avatar("https://ui-avatars.com/api/?name=" + request.getUsername()) // Default avatar
+                .build();
+
         userRepository.save(user);
-        return "Đăng ký thành công";
+        return ResponseEntity.ok(ApiResponse.success("Registration successful", null));
     }
 
     @PostMapping("/login")
-    public AuthReponse login(@RequestBody AuthRequest authRequest){
-        User user = userRepository.findByUsername(authRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("Sai Thông tin"));
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody AuthRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElse(null);
 
-        if (!passwordEncoder.matches(authRequest.getPassword(), user.getPassword()))
-            throw new RuntimeException("Sai mật khẩu");
-
+        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ApiResponse.error("Invalid username or password"));
+        }
 
         String accessToken = jwtService.generateToken(user.getUsername());
-        String refreshToken = jwtService.generateToken(user.getUsername());
+        
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setAvatar(user.getAvatar());
+        userDto.setEmail(user.getEmail());
 
-        user.setRefreshToken(refreshToken);
-        userRepository.save(user);
-        return new AuthReponse(accessToken,refreshToken);
+        LoginResponse loginResponse = LoginResponse.builder()
+                .accessToken(accessToken)
+                .user(userDto)
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.success("Login successful", loginResponse));
     }
 
-//    @PostMapping("/refresh")
-//    public AuthResponse refreshToken(@RequestParam String refreshToken) {
-//        if (!jwtService.validateToken(refreshToken))
-//            throw new RuntimeException("Refresh token không hợp lệ");
-//
-//        String username = jwtService.extractUsername(refreshToken);
-//        User user = userRepo.findByUsername(username).orElseThrow();
-//
-//        if (!refreshToken.equals(user.getRefreshToken()))
-//            throw new RuntimeException("Token không khớp");
-//
-//        String newAccessToken = jwtService.generateToken(username, 15 * 60 * 1000);
-//        return new AuthResponse(newAccessToken, refreshToken);
-//    }
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<UserDto>> me() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setUsername(user.getUsername());
+        userDto.setAvatar(user.getAvatar());
+        userDto.setEmail(user.getEmail());
+
+        return ResponseEntity.ok(ApiResponse.success("User info", userDto));
+    }
 }
