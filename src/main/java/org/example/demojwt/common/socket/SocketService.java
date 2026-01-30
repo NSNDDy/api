@@ -1,4 +1,4 @@
-package org.example.demojwt.socket;
+package org.example.demojwt.common.socket;
 
 import org.example.demojwt.info.entity.Message;
 import org.example.demojwt.info.entity.MessageType;

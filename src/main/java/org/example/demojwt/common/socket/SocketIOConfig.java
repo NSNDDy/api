@@ -1,4 +1,4 @@
-package org.example.demojwt.socket;
+package org.example.demojwt.common.socket;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import org.springframework.beans.factory.annotation.Value;

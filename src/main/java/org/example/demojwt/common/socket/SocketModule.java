@@ -1,4 +1,4 @@
-package org.example.demojwt.socket;
+package org.example.demojwt.common.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
@@ -13,7 +13,6 @@ import org.example.demojwt.info.entity.User;
 import org.example.demojwt.info.repository.UserRepository;
 import org.springframework.stereotype.Component;
 
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

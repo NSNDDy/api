@@ -30,7 +30,8 @@ public class SecurityConfig {
                                                                                                       "/socket.io/**",
                                                                                                       "/api/auth/**",
                                                                                                       "/error",
-                                                                                                      "/api-login").permitAll().anyRequest().authenticated()).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).headers(headers -> headers.disable());
+                                                                                                      "/api-login")
+                .permitAll().anyRequest().authenticated()).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).headers(headers -> headers.disable());
 
         http.addFilterBefore(jwtFilter,
                              UsernamePasswordAuthenticationFilter.class);
