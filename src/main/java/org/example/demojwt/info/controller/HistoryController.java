@@ -17,9 +17,9 @@ public class HistoryController {
     private final HistoryRepository historyRepository;
 
     @GetMapping("/history")
-    public ResponseEntity<ApiResponse<List<Message>>> getHistory(@RequestParam String rommId) {
+    public ResponseEntity<ApiResponse<List<Message>>> getHistory(@RequestParam String roomId) {
 
-        List<Message> messageList = historyRepository.findAllbyMessage(rommId);
+        List<Message> messageList = historyRepository.findAllbyMessage(roomId);
 
         if (messageList.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Message is empty !"));
