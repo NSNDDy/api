@@ -38,6 +38,9 @@ public class SecurityConfig {
                                                                       "/socket.io/**",
                                                                       "/api/auth/**",
                                                                       "/error",
+                                                                      "/v3/api-docs/**",
+                                                                      "/swagger-ui/**",
+                                                                      "/swagger-ui.html",
                                                                       "/api-login")
                 .permitAll().anyRequest().authenticated()).sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).headers(headers -> headers.disable());
 
@@ -48,6 +51,7 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

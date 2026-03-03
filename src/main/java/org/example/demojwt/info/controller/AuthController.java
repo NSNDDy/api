@@ -2,6 +2,7 @@ package org.example.demojwt.info.controller;
 
 import org.example.demojwt.common.dto.*;
 import org.example.demojwt.common.service.JwtService;
+import org.example.demojwt.common.mapper.UserMapper;
 import org.example.demojwt.info.entity.User;
 import org.example.demojwt.info.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -21,9 +23,11 @@ public class AuthController {
     private JwtService jwtService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserMapper userMapper;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<String>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<String>> register(@Valid @RequestBody RegisterRequest request) {
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("Username already exists"));
         }
@@ -40,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody AuthRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElse(null);
 
@@ -51,11 +55,7 @@ public class AuthController {
 
         String accessToken = jwtService.generateToken(user.getUsername());
         
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setAvatar(user.getAvatar());
-        userDto.setEmail(user.getEmail());
+        UserDto userDto = userMapper.toDto(user);
 
         LoginResponse loginResponse = LoginResponse.builder()
                 .accessToken(accessToken)
@@ -71,11 +71,7 @@ public class AuthController {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        UserDto userDto = new UserDto();
-        userDto.setId(user.getId());
-        userDto.setUsername(user.getUsername());
-        userDto.setAvatar(user.getAvatar());
-        userDto.setEmail(user.getEmail());
+        UserDto userDto = userMapper.toDto(user);
 
         return ResponseEntity.ok(ApiResponse.success("User info", userDto));
     }
