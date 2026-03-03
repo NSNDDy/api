@@ -19,7 +19,7 @@ public class SocketIOConfig {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
         config.setHostname(host);
         config.setPort(port);
-        // config.setOrigin("*"); // In production, restrict this
+        config.setOrigin("*"); // Allow all origins for now (or restrict to frontend URL)
         return new SocketIOServer(config);
     }
 }

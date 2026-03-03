@@ -2,7 +2,9 @@ package org.example.demojwt.common.service;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import jakarta.annotation.PostConstruct;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
@@ -11,14 +13,16 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    // Ít nhất 256-bit (32 bytes) để sử dụng với HS256
-    private static final String SECRET = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
+    @Value("${jwt.key}")
+    private String secretKey;
+    
     private static final long EXPIRATION_MS = 3600000; // 1 giờ
 
-    private final Key key;
+    private Key key;
 
-    public JwtService() {
-        this.key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String generateToken(String username) {
