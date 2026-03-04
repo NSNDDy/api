@@ -6,4 +6,3 @@ target
 *.iml
 README.md
 Dockerfile
-nginx.conf
