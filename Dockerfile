@@ -1,12 +1,12 @@
 # Stage 1: Build the application
-FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application
-FROM openjdk:17-jdk-slim
+# Dùng eclipse-temurin:17-jdk-jammy thay cho openjdk:17-jdk-slim (đã cũ/lỗi)
+FROM eclipse-temurin:17-jdk-jammy
 
 # Install Nginx
 RUN apt-get update && apt-get install -y nginx && rm -rf /var/lib/apt/lists/*
