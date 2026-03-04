@@ -1,0 +1,9 @@
+target
+.mvn
+.git
+.gitignore
+.idea
+*.iml
+README.md
+Dockerfile
+nginx.conf
