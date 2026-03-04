@@ -1,4 +1,6 @@
 # Stage 1: Build the application
+# Dùng maven:3.9-eclipse-temurin-17 để build code
+FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
