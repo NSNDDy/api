@@ -21,11 +21,6 @@ public class HistoryController {
 
         List<Message> messageList = historyRepository.findAllbyMessage(roomId);
 
-        if (messageList.isEmpty()) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Message is empty !"));
-        }
-
-        return ResponseEntity.ok(ApiResponse.success("Success!",
-                                                     messageList));
+        return ResponseEntity.ok(ApiResponse.success("Success!", messageList));
     }
 }
