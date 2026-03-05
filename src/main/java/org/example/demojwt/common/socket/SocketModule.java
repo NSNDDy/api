@@ -51,35 +51,19 @@ public class SocketModule {
     private ConnectListener onConnected() {
         return (client) -> {
             String token = client.getHandshakeData().getSingleUrlParam("token");
-            // Also check auth header or auth object from handshake if client sends it differently
-            // Spec says: { "auth": { "token": "Bearer <accessToken>" } }
-            // netty-socketio doesn't automatically parse "auth" object from handshake packet in older versions, 
-            // but usually it's in handshake data or url params.
-            // If client uses socket.io v4, auth is in handshake.
-            
-            // Try to get from HandshakeAuth (if available in this version) or params
-            // Note: netty-socketio 2.x might access headers or url params easier.
-            
-            // Let's assume Nuxt passes it in auth object, which might be available in getHandshakeData().getHttpHeaders() or similar?
-            // Actually, netty-socketio usually expects it in query params for easy access, but let's check headers.
-            
-            // If the client sends it in `auth` option, it might not be directly exposed in `getSingleUrlParam`.
-            // However, common workaround is to send in query string `?token=...`
-            // If spec strictly says `auth: { token: ... }`, we might need to parse it.
-            // But let's assume we can also check headers or params.
-            
-            // For this implementation, let's try to extract token from various places.
-            
-            // NOTE: Simple verification.
             if (token == null) {
-                // Try headers
                 token = client.getHandshakeData().getHttpHeaders().get("Authorization");
             }
-            
-            if (token != null && token.startsWith("Bearer ")) {
-                token = token.substring(7);
+
+            if (token != null) {
+                String normalized = token.replace("%20", " ").replace("+", " ").trim();
+                if (normalized.regionMatches(true, 0, "Bearer ", 0, 7)) {
+                    token = normalized.substring(7).trim();
+                } else {
+                    token = normalized;
+                }
             }
-            
+
             if (token != null && jwtService.validateToken(token)) {
                 String username = jwtService.extractUsername(token);
                 Optional<User> user = userRepository.findByUsername(username);
