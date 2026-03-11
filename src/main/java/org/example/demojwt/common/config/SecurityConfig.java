@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/h2-console/**",
-                                                                      "/api*",
+                                                                      "/api/**",
                                                                       "/api/health",
                                                                       "/socket.io/**",
                                                                       "/api/auth/**",
