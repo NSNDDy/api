@@ -11,5 +11,6 @@ import java.util.Optional;
 @Repository
 public interface CalendarTodoRepository extends JpaRepository<CalendarTodo, Long> {
     List<CalendarTodo> findByUser_IdAndDateOrderByCreatedAtAsc(Long userId, LocalDate date);
+    List<CalendarTodo> findByUser_IdOrderByDateAscCreatedAtAsc(Long userId);
     Optional<CalendarTodo> findByIdAndUser_Id(Long id, Long userId);
 }
