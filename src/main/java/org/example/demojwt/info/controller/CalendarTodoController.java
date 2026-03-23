@@ -38,14 +38,27 @@ public class CalendarTodoController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> listByDate(@RequestParam("date") String dateIso) {
+    public ResponseEntity<ApiResponse<List<Map<String, Object>>>> list(
+            @RequestParam(value = "date", required = false) String dateIso,
+            @RequestParam(value = "from", required = false) String fromIso,
+            @RequestParam(value = "to", required = false) String toIso
+    ) {
         User me = currentUser();
-        LocalDate date = LocalDate.parse(dateIso);
-        List<Map<String, Object>> items = calendarTodoRepository.findByUser_IdAndDateOrderByCreatedAtAsc(me.getId(),
-                                                                                                         date)
-                .stream().map(this::toDto).collect(Collectors.toList());
-        return ResponseEntity.ok(ApiResponse.success("Todos",
-                                                     items));
+        List<CalendarTodo> todos;
+
+        if (fromIso != null && toIso != null && !fromIso.isEmpty() && !toIso.isEmpty()) {
+            LocalDate from = LocalDate.parse(fromIso);
+            LocalDate to = LocalDate.parse(toIso);
+            todos = calendarTodoRepository.findByUser_IdAndDateBetweenOrderByDateAscCreatedAtAsc(me.getId(), from, to);
+        } else if (dateIso != null && !dateIso.isEmpty()) {
+            LocalDate date = LocalDate.parse(dateIso);
+            todos = calendarTodoRepository.findByUser_IdAndDateOrderByCreatedAtAsc(me.getId(), date);
+        } else {
+            todos = calendarTodoRepository.findByUser_IdOrderByDateAscCreatedAtAsc(me.getId());
+        }
+
+        List<Map<String, Object>> items = todos.stream().map(this::toDto).collect(Collectors.toList());
+        return ResponseEntity.ok(ApiResponse.success("Todos", items));
     }
 
     @PostMapping
@@ -58,11 +71,21 @@ public class CalendarTodoController {
                 .trim();
         String project = body.get("project") != null ? String.valueOf(body.get("project")).trim() : null;
         String priority = body.get("priority") != null ? String.valueOf(body.get("priority")).trim() : "medium";
+        String status = body.get("status") != null ? String.valueOf(body.get("status")).trim() : "open";
         if (text.isEmpty() || dateIso.isEmpty()) {
             return ResponseEntity.badRequest().body(ApiResponse.error("date and text are required"));
         }
         LocalDate date = LocalDate.parse(dateIso);
-        CalendarTodo entity = CalendarTodo.builder().user(me).date(date).text(text).project(project).priority(priority).done(false).build();
+        boolean done = "done".equalsIgnoreCase(status);
+        CalendarTodo entity = CalendarTodo.builder()
+                .user(me)
+                .date(date)
+                .text(text)
+                .project(project)
+                .priority(priority)
+                .status(status)
+                .done(done)
+                .build();
         CalendarTodo saved = calendarTodoRepository.save(entity);
         return ResponseEntity.ok(ApiResponse.success("Created",
                                                      toDto(saved)));
@@ -88,9 +111,20 @@ public class CalendarTodoController {
             String priority = String.valueOf(body.get("priority")).trim();
             todo.setPriority(priority);
         }
+        if (body.containsKey("status")) {
+            String status = String.valueOf(body.get("status")).trim();
+            todo.setStatus(status);
+            todo.setDone("done".equalsIgnoreCase(status));
+        }
         if (body.containsKey("done")) {
             boolean done = Boolean.parseBoolean(String.valueOf(body.get("done")));
             todo.setDone(done);
+            if (done && !body.containsKey("status")) {
+                todo.setStatus("done");
+            }
+            if (!done && !body.containsKey("status") && "done".equalsIgnoreCase(todo.getStatus())) {
+                todo.setStatus("open");
+            }
         }
         CalendarTodo saved = calendarTodoRepository.save(todo);
         return ResponseEntity.ok(ApiResponse.success("Updated",
@@ -110,6 +144,7 @@ public class CalendarTodoController {
 
     private User currentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        System.out.println(username);
         return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
@@ -120,6 +155,7 @@ public class CalendarTodoController {
         dto.put("text", t.getText());
         dto.put("project", t.getProject());
         dto.put("priority", t.getPriority());
+        dto.put("status", t.getStatus() != null ? t.getStatus() : "open");
         dto.put("done", t.isDone());
         dto.put("createdAt", t.getCreatedAt());
         dto.put("updatedAt", t.getUpdatedAt());
