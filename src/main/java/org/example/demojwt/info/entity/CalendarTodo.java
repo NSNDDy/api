@@ -38,6 +38,9 @@ public class CalendarTodo {
     @Column(name = "priority", length = 16)
     private String priority; // low | medium | high
 
+    @Column(name = "status", length = 16)
+    private String status; // open | progress | done | close
+
     @Column(name = "done", nullable = false)
     private boolean done;
 
