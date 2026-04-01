@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findByRoomIdOrderByCreatedAtAsc(String roomId);
+    List<Message> findByRoomIdOrderByIdAsc(String roomId);
 }

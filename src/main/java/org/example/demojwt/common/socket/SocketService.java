@@ -34,6 +34,6 @@ public class SocketService {
     }
     
     public List<Message> getMessages(String roomId) {
-        return messageRepository.findByRoomIdOrderByCreatedAtAsc(roomId);
+        return messageRepository.findByRoomIdOrderByIdAsc(roomId);
     }
 }

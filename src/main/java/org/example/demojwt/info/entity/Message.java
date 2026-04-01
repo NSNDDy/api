@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
+import org.hibernate.annotations.CreationTimestamp;
+import java.time.Instant;
 
 @Entity
 @Data
@@ -31,11 +32,7 @@ public class Message {
     @Enumerated(EnumType.STRING)
     private MessageType type;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
+    private Instant createdAt;
 }

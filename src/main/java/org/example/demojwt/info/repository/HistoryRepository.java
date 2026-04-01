@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface HistoryRepository extends JpaRepository<Message, Long> {
-    @Query(value = "SELECT * FROM messages WHERE room_id = :roomId ORDER BY created_at ASC", nativeQuery = true)
+    @Query(value = "SELECT * FROM messages WHERE room_id = :roomId ORDER BY id ASC", nativeQuery = true)
     List<Message> findAllbyMessage(@Param("roomId") String roomId);
 }
