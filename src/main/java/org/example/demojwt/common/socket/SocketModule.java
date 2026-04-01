@@ -70,6 +70,8 @@ public class SocketModule {
                 if (user.isPresent()) {
                     client.set("user_id", user.get().getId());
                     client.set("username", username);
+                    // Join personal room for private notifications
+                    client.joinRoom("user_" + user.get().getId());
                     log.info("User {} connected with socket {}", username, client.getSessionId());
                 } else {
                     client.disconnect();
@@ -124,7 +126,25 @@ public class SocketModule {
             sender.put("avatar", message.getSender().getAvatar());
             response.put("sender", sender);
             
+            // Broadcast to the room (for people currently in the chat window)
             server.getRoomOperations(data.getRoomId()).sendEvent("receive_message", response);
+
+            // If it's a private room, also notify the other user (even if they're not in the room)
+            if (data.getRoomId().startsWith("private_")) {
+                String[] parts = data.getRoomId().split("_");
+                if (parts.length == 3) {
+                    try {
+                        Long id1 = Long.parseLong(parts[1]);
+                        Long id2 = Long.parseLong(parts[2]);
+                        Long otherUserId = userId.equals(id1) ? id2 : id1;
+                        
+                        // Send specifically to the other user's personal room
+                        server.getRoomOperations("user_" + otherUserId).sendEvent("private_notification", response);
+                    } catch (NumberFormatException e) {
+                        log.error("Error parsing room ID for private notification", e);
+                    }
+                }
+            }
         };
     }
     

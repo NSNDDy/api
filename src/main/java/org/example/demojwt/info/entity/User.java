@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -21,6 +23,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @JsonIgnore
     @Column(name = "password_hash", nullable = false)
     private String password;
 
@@ -29,6 +32,7 @@ public class User {
     
     private String avatar;
 
+    @JsonIgnore
     @Column(length = 1000)
     private String token;
     private int role;
